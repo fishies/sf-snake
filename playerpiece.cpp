@@ -6,7 +6,7 @@ namespace SnakeGame
         : GamePiece(initX, initY)
     {
         alive = true;
-        lock = false;
+        changeTo = Directions::NO_MOVE;
     }
 
     std::queue<std::shared_ptr<GamePiece>> *PlayerPiece::getTailList()
@@ -30,12 +30,8 @@ namespace SnakeGame
         //  This might not necessarily be faster than if-statements,
         //  but the number of operations is constant in every situation
         //  and we don't have to deal with branch prediction failures.
-        if(!lock && this->direction != direction // we don't want to lock turns when player is holding down a key
-                 && this->direction != (direction ^ (3 << ((direction > Directions::WEST) << 1))))
-        {
-            this->direction = direction;
-            lock = true; //only be able to change direction once per step
-        }
+        if(this->direction != (direction ^ (3 << ((direction > Directions::WEST) << 1))))
+            changeTo = direction;
     }
 
     void PlayerPiece::grow()
@@ -46,7 +42,9 @@ namespace SnakeGame
 
     void PlayerPiece::step()
     {
-        lock = false;
+        if(changeTo != Directions::NO_MOVE)
+            direction = changeTo;
+        changeTo = Directions::NO_MOVE;
 
         //Update the tail
         if(tail.size())
@@ -72,8 +70,6 @@ namespace SnakeGame
     {
         setXPos(width/2);
         setYPos(height/2);
-        //while(!tail.empty())
-        //    tail.pop();
         tail = {};
         tailSet.clear();
         direction = Directions::NO_MOVE;

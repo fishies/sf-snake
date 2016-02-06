@@ -26,10 +26,10 @@ namespace SnakeGame
 
     private:
         Directions direction;
+        Directions changeTo;
         std::queue<std::shared_ptr<GamePiece>> tail;
         std::unordered_set<uint32_t> tailSet;
         bool alive;
-        bool lock; //instead of a lock, set desired direction and don't change until next step
     };
 }
 
