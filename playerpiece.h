@@ -13,7 +13,8 @@ namespace SnakeGame
     public:
         PlayerPiece(uint16_t initX = 0, uint16_t initY = 0);
 
-        std::queue<std::shared_ptr<GamePiece>> * getTailList();
+        const std::queue<std::shared_ptr<GamePiece>> * getTailList() const;
+        const std::unordered_set<uint32_t> * getTailSet() const;
 
         void turn(Directions direction);
         void grow();

@@ -2,8 +2,7 @@
 #define GAMEBOARD_H
 
 #include <SFML/Graphics.hpp>
-#include <cstdlib>
-#include <ctime>
+#include <random>
 #include "playerpiece.h"
 
 namespace SnakeGame
@@ -27,6 +26,8 @@ namespace SnakeGame
         PlayerPiece player;
         std::unordered_set<uint32_t> walls;
         GamePiece food;
+        std::mt19937 rEngine;
+        std::uniform_int_distribution<uint16_t> randX, randY;
     };
 }
 

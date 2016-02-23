@@ -9,9 +9,14 @@ namespace SnakeGame
         changeTo = Directions::NO_MOVE;
     }
 
-    std::queue<std::shared_ptr<GamePiece>> *PlayerPiece::getTailList()
+    const std::queue<std::shared_ptr<GamePiece>> *PlayerPiece::getTailList() const
     {
         return &tail;
+    }
+
+    const std::unordered_set<uint32_t> *PlayerPiece::getTailSet() const
+    {
+        return &tailSet;
     }
 
     void PlayerPiece::turn(Directions direction)

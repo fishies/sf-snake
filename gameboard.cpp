@@ -4,12 +4,15 @@ namespace SnakeGame
 {
     GameBoard::GameBoard(uint16_t width, uint16_t height)
     {
-        srand(time(NULL));
+        std::random_device rd;
+        rEngine.seed(rd());
+        randX = std::uniform_int_distribution<uint16_t>(1, width-2);
+        randY = std::uniform_int_distribution<uint16_t>(1, height-2);
 
         this->width = width;
         this->height = height;
-
         player = PlayerPiece(width/2, height/2);
+
         for(int i = 0; i < width; i++)
         {
             walls.insert(i << 16);
@@ -21,7 +24,7 @@ namespace SnakeGame
             walls.insert(((width-1) << 16) | j);
         }
 
-        food = GamePiece((rand() % (width - 2)) + 1, (rand() % (height - 2) + 1));
+        food = GamePiece(randX(rEngine), randY(rEngine));
     }
 
     PlayerPiece * GameBoard::getPlayer()
@@ -47,12 +50,13 @@ namespace SnakeGame
             return;
         }
         // check if player has picked up the food
-        if(player.getPosition() == food.getPosition())
-        {
-            player.grow();
-            food.setXPos((rand() % (width - 2)) + 1);
-            food.setYPos((rand() % (height - 2) + 1));
-        }
+        for(auto x = randX(rEngine), y = randY(rEngine);
+            player.getPosition() == food.getPosition();
+            food.setXPos(x), food.setYPos(y)) //outer for is used to limit scope
+            for(player.grow();
+                player.getTailSet()->count((((uint32_t)x)<<16)|y) ||
+                (player.getXPos()==x && player.getYPos()==y);
+                x=randX(rEngine), y=randY(rEngine));
     }
 
     void GameBoard::drawBoard(sf::RenderWindow * target)
